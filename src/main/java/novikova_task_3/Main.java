@@ -24,9 +24,18 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        //createNewDatabase();
-       // createUserTable();
-       // createAccountTable();
+
+        BankOperations bankOperations = new BankOperations(url);
+       // bankOperations.chooseOperation("1");
+//        String sql = "SELECT * FROM UserTable";
+//        try(Connection connection = bankOperations.getConnection(url); Statement statement = connection.createStatement();
+//        ResultSet resultSet = statement.executeQuery(sql)) {
+//            while(resultSet.next()){
+//                System.out.println(resultSet.getString(1)+" "+resultSet.getString(2));
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void createUserTable() {
@@ -49,12 +58,13 @@ public class Main {
 
     public static void createAccountTable() {
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE AccountTable (\n" +
-                "    id_user INTEGER PRIMARY KEY,\n" +
-                "    login TEXT NOT NULL UNIQUE,\n" +
-                "    password TEXT NOT NULL,\n" +
-                "    address TEXT NOT NULL,\n" +
-                "    phone TEXT NOT NULL UNIQUE\n" +
+        String sql = "CREATE TABLE Account (\n" +
+                "    id BLOB PRIMARY KEY DEFAULT (randomblob(16)),\n" +
+                "    client_id      INTEGER NOT NULL,\n" +
+                "    amount DECIMAL(7,2) DEFAULT (0.00),\n" +
+                "    accCode TEXT NOT NULL,\n" +
+                "        FOREIGN KEY (client_id)\n" +
+                "        REFERENCES UserTable (id_user)\n" +
                 ");\n";
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {
