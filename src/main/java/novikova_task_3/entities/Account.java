@@ -1,4 +1,4 @@
-package novikova_task_3;
+package novikova_task_3.entities;
 
 import java.math.BigDecimal;
 import java.sql.Blob;
