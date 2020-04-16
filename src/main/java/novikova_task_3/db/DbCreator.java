@@ -61,7 +61,7 @@ public class DbCreator {
                 "    operation TEXT NOT NULL,\n" +
                 "    accountFrom TEXT,\n" +
                 "    accountTo TEXT NOT NULL,\n" +
-                "    date TEXT NOT NULL"+
+                "    date TEXT NOT NULL,"+
                 "    amount TEXT NOT NULL"+
                 ");\n";
         try (Connection conn = DriverManager.getConnection(url);

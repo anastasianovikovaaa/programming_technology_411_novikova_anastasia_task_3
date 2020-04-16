@@ -35,17 +35,23 @@ public class AccountUtils {
     }
 
     public static void transferMoney(Connection connection, User user) {
+        if (user == null) {
+            System.out.println("Please, log in");
+            return;
+        }
         Map<String, Account> accounts = loadAccounts(connection, user.getId());
-        System.out.println("Enter the id of account:");
-        String id = in.nextLine();
-        Account accountFrom = accounts.get(id);
+        System.out.println("Enter the currency of your account:");
+        String currency = in.nextLine();
+        Account accountFrom = accounts.get(currency);
         if(accountFrom == null){
             System.out.println("Account was not found.");
             return;
         }
         System.out.println("Enter the phone number:");
         String phone = in.nextLine();
-        Account accountTo = Objects.requireNonNull(loadAccounts(connection, phone)).get(accountFrom.getAccCode());
+        String accCode = accountFrom.getAccCode();
+        Map<String,Account> accMap = loadAccounts(connection, phone);
+        Account accountTo = accMap.get(accCode);
         if(accountTo == null){
             System.out.println("User does not has account with this accCode");
             return;
@@ -117,7 +123,8 @@ public class AccountUtils {
             preparedStatement.setString(1,phone);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
-                return loadAccounts(connection, resultSet.getInt("id"));
+                Map<String, Account> accountMap = loadAccounts(connection, resultSet.getInt("id_user"));
+                return accountMap;
             }
         } catch (SQLException e) {
             e.printStackTrace();

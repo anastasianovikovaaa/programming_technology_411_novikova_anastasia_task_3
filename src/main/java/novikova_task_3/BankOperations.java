@@ -1,14 +1,14 @@
 package novikova_task_3;
 
-import novikova_task_3.entities.Account;
 import novikova_task_3.entities.User;
 import novikova_task_3.operations.AccountUtils;
 import novikova_task_3.operations.AuthorizationUtils;
 import novikova_task_3.operations.HistoryUtils;
 
-import java.math.BigDecimal;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Scanner;
 
 public class BankOperations {
 
@@ -24,12 +24,14 @@ public class BankOperations {
 
     public boolean makeOperation(){
 
-        System.out.println("Choose the operatioin: " +
+        System.out.println("Choose the operation: " +
                 "\n 1 - Registration;" +
-                "\n 2 - Logiin;" +
+                "\n 2 - Login;" +
                 "\n 3 - Create account;" +
                 "\n 4 - Make deposit;" +
-                "\n 5 - Show history;");
+                "\n 5 - Transfer money;" +
+                "\n 6 - Show history;" +
+                "\n 7 - Exit;");
         String operation = in.nextLine();
         switch (operation){
             case ("1"):

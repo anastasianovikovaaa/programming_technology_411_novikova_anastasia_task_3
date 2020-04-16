@@ -12,6 +12,7 @@ public class User {
     private List<String> history;
 
     public User(int id, String login, String password, String address, String phone) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.address = address;
