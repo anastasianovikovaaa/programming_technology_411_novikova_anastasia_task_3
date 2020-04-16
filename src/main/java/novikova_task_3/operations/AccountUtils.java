@@ -1,6 +1,7 @@
 package novikova_task_3.operations;
 
 import novikova_task_3.entities.Account;
+import novikova_task_3.entities.HistoryOperations;
 import novikova_task_3.entities.User;
 
 import java.math.BigDecimal;
@@ -8,10 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
+
+import static novikova_task_3.operations.HistoryUtils.addToHistory;
 
 public class AccountUtils {
 
@@ -34,7 +34,7 @@ public class AccountUtils {
         }
     }
 
-    public static  void transferMoney(Connection connection, User user) {
+    public static void transferMoney(Connection connection, User user) {
         Map<String, Account> accounts = loadAccounts(connection, user.getId());
         System.out.println("Enter the id of account:");
         String id = in.nextLine();
@@ -57,9 +57,10 @@ public class AccountUtils {
         accountTo.setAmount(accountTo.getAmount().add(sum));
         updateAccount(connection, accountTo);
         user.addToHistory(String.format("Operation: Transfering money: %s, from %s to %s", sum, accountFrom.getId(), accountTo.getId()));
+        addToHistory(connection, new HistoryOperations("Transfering",accountFrom.getId(), accountTo.getId(), new Date(), sum.toString()));
     }
 
-    public static  void makeDeposit(Connection connection, User user) {
+    public static void makeDeposit(Connection connection, User user) {
         if(user == null){
             System.out.println("Please, log in");
             return;
@@ -70,19 +71,44 @@ public class AccountUtils {
             System.out.println("This user has no accounts");
             return;
         }
-        System.out.println("Enter the id of account:");
-        String id = in.nextLine();
-        Account account = accounts.get(id);
+        System.out.println("Enter the currency of your account:");
+        String cur = in.nextLine();
+        Account account = accounts.get(cur);
         if(account == null){
             System.out.println("Account was not found.");
             return;
         }
+        System.out.println("Choose the currency of your deposit:" +
+                "\n 1 - RUB;" +
+                "\n 2 - USD;" +
+                "\n 3 - EUR;");
+        String choose = in.nextLine();
         System.out.println("Enter the amount of the deposit:");
         BigDecimal amount = in.nextBigDecimal();
+        switch (choose){
+            case "1":
+                if(cur.equals("USD")){
+                    amount = Convertation.СurrencyToRubles(amount, Convertation.getRateUSD());
+                }else
+                if(cur.equals("EUR")){
+                    amount = Convertation.СurrencyToRubles(amount, Convertation.getRateEUR());
+                }
+                break;
+            case "2":
+                amount = Convertation.RublesToCurrency(amount, Convertation.getRateUSD());
+                break;
+            case "3":
+                amount = Convertation.RublesToCurrency(amount, Convertation.getRateEUR());
+                break;
+            default:
+                System.out.println("Wrong choice!");
+                return;
+        }
         account.setAmount(account.getAmount().add(amount));
         updateAccount(connection, account);
         user.addToHistory(String.format("Account: %s, depositing amount: %s, total sum: %s", account.getId(), amount,
                 account.getAmount()));
+        addToHistory(connection, new HistoryOperations("Deposit",account.getId(), account.getId(), new Date(), amount.toString()));
     }
 
     public static Map<String, Account> loadAccounts(Connection connection, String phone){
@@ -113,7 +139,7 @@ public class AccountUtils {
                         , result.getInt("client_id")
                         , new BigDecimal(result.getString("amount"))
                         , result.getString("accCode"));
-                userAccounts.put(account.getId(),account);
+                userAccounts.put(account.getAccCode(),account);
             }
             if (userAccounts.size() == 0) return new HashMap<>();
         }

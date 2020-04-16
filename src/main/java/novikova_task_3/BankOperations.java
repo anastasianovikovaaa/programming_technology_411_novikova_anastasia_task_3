@@ -4,6 +4,7 @@ import novikova_task_3.entities.Account;
 import novikova_task_3.entities.User;
 import novikova_task_3.operations.AccountUtils;
 import novikova_task_3.operations.AuthorizationUtils;
+import novikova_task_3.operations.HistoryUtils;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -56,7 +57,7 @@ public class BankOperations {
     }
 
     private  void showHistory() {
-
+        HistoryUtils.getHistory(connection);
     }
 
 

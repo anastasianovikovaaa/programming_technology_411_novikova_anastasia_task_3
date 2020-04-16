@@ -53,4 +53,23 @@ public class DbCreator {
             System.out.println(e.getMessage());
         }
     }
+
+    public static void createHistoryOperations(String url) {
+        // SQL statement for creating a new table
+        String sql = "CREATE TABLE HistoryOperations (\n" +
+                "    id_history INTEGER PRIMARY KEY,\n" +
+                "    operation TEXT NOT NULL,\n" +
+                "    accountFrom TEXT,\n" +
+                "    accountTo TEXT NOT NULL,\n" +
+                "    date TEXT NOT NULL"+
+                "    amount TEXT NOT NULL"+
+                ");\n";
+        try (Connection conn = DriverManager.getConnection(url);
+             Statement stmt = conn.createStatement()) {
+            // create a new table
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
