@@ -51,6 +51,10 @@ public class AccountUtils {
         String phone = in.nextLine();
         String accCode = accountFrom.getAccCode();
         Map<String,Account> accMap = loadAccounts(connection, phone);
+        if(accMap == null ||  accCode == null){
+            System.out.println("This phone number is not registered.");
+            return;
+        }
         Account accountTo = accMap.get(accCode);
         if(accountTo == null){
             System.out.println("User does not has account with this accCode");
@@ -101,10 +105,22 @@ public class AccountUtils {
                 }
                 break;
             case "2":
-                amount = Convertation.RublesToCurrency(amount, Convertation.getRateUSD());
+                if(!cur.equals("USD")) {
+                    if( cur.equals("RUB"))
+                        amount = Convertation.RublesToCurrency(amount, Convertation.getRateUSD());
+                    else
+                        if(cur.equals("EUR"))
+                            amount = Convertation.CurrencyToCurrency(amount, Convertation.getRateEUR(), Convertation.getRateUSD());
+                }
                 break;
             case "3":
-                amount = Convertation.RublesToCurrency(amount, Convertation.getRateEUR());
+                if(!cur.equals("EUR")){
+                    if(cur.equals("RUB"))
+                        amount = Convertation.RublesToCurrency(amount, Convertation.getRateEUR());
+                    else
+                    if(cur.equals("USD"))
+                        amount = Convertation.CurrencyToCurrency(amount, Convertation.getRateUSD(), Convertation.getRateEUR());
+                }
                 break;
             default:
                 System.out.println("Wrong choice!");
@@ -168,3 +184,4 @@ public class AccountUtils {
         }
     }
 }
+
